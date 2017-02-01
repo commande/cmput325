@@ -50,14 +50,28 @@ Acceptable built-in functions:
 
 ;;; QUESTION 1
 
-;; documentation
 (defun xmember (X Y)
-	" This "
-)
+	"
+	Returns T if argument Y is a member of the argument list X and NIL 
+	otherwise. Also tests for lists being members of lists. Both the list X and
+	the argument Y may be NIL or lists containing NIL.
 
-;; documentation
-(defun q1_helper_1 (...)
-...
+	Solution essentially tests y against each element of x until a match
+	or the end of x is found. It uses 3 base cases for first element of x with 
+	recursion on the remaining elements: (1) a fail case when x is nil and thus
+	can't contain y, (2) a success case when the x element matches y, and (3) 
+	a fail case when x contains no more elements after not matching y.
+	"
+
+	(cond
+		;; base cases
+		((eq X NIL) NIL); list is empty (fail)
+		((equal (car X) Y) T); list contains Y (success) 
+		((eq (cdr X) NIL) NIL); end of list (fail)
+
+		;; recursion to iterate over remaining elements of list
+		(T (xmember (cdr X) Y))
+	)
 )
 
 ;; QUESTION 2
