@@ -4,7 +4,7 @@ At the top of each file:
 
 Brett Commandeur
 
-1255891
+SID
 
 CMPUT 325 Wi17 - NON-PROCEDURAL PROG LANGUAGES Combined LAB LEC Wi17
 
