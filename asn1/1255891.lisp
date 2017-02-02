@@ -77,20 +77,23 @@ Acceptable built-in functions:
 (defun flatten (x)
   "Returns list of only the atoms appearing in list x and its contained nested sublists in order of appearance."
 
-  ;; invoke accumulating parameters
   (collect-atoms x nil))
 
 (defun collect-atoms (x y)
-  "Searches list x for atoms and captures them in list y"
+  "Searches list x and sublists in x for atoms and captures them in list y"
 
   (cond
-    ((null x) y) ; all atoms found
-    ((atom (car x) ; atom found
+    ;; List to search is empty
+    ((null x) y)
+
+    ;; First list element is an atom
+    ((atom (car x)
       (collect-atoms
-        (cdr x) ; iterate through remaining items
+        (cdr x) ; search remainder of list
         (append y (list (car x)))))) ; capture found atom for return list
-    (t ; list found
+
+    ;; First list element is not an atom
+    (t
       (collect-atoms
-        (cdr x) ; iterate through remaining items
-        (append y ; capture atoms contained in found list for return list
-          (collect-atoms (car x) nil))))))
+        (cdr x) ; search remainder of list
+        (append y (collect-atoms (car x) nil)))))) ; capture atoms contained in found list for return list

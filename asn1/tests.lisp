@@ -35,23 +35,23 @@
 ;;; Tests
 
 (deftest test-xmember ()
-	(check
-		(eq (xmember '(1) '1) T)
-		(eq (xmember '((1) 2 3) '1) NIL)
-		(eq (xmember '((1) 2 3) '(1)) T)
-		(eq (xmember nil nil) NIL)
-		(eq (xmember '(nil) nil) T)
-		(eq (xmember '((nil)) nil) NIL)
-		(eq (xmember '(1 2 3 (nil)) '(nil)) T)
-		(eq (xmember '(nil) '(nil)) NIL)
-	)
-)
+  (check
+    (eq (xmember '(1) '1) T)
+    (eq (xmember '((1) 2 3) '1) NIL)
+    (eq (xmember '((1) 2 3) '(1)) T)
+    (eq (xmember nil nil) NIL)
+    (eq (xmember '(nil) nil) T)
+    (eq (xmember '((nil)) nil) NIL)
+    (eq (xmember '(1 2 3 (nil)) '(nil)) T)
+    (eq (xmember '(nil) '(nil)) NIL)))
+
+(deftest test-flatten ()
+  (check
+    (equal (flatten '(((((a))((((((b)))))))))) '(a b))
+    (equal (flatten '(a (b c) (d ((e)) f))) '(a b c d e f))
+    (equal (flatten '(a (b c) (((d)) e))) '(a b c d e))))
 
 (defun test-asn1 ()
-	(combine-results
-		(test-xmember)
-	)
-)
-
-
-
+  (combine-results
+    (test-xmember)
+    (test-flatten)))
