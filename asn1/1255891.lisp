@@ -3,11 +3,11 @@
 
 ;;;; Brett Commandeur
 ;;;; 1255891
-;;;; CMPUT 325 Wi17 - NON-PROCEDURAL PROG LANGUAGES Combined LAB LEC Wi17
+;;;; CMPUt 325 Wi17 - NON-PROCEDURAL PROG LANGUAGES Combined LAB LEC Wi17
 
 #|--- TODO: Remove this comment
 
-Acceptable built-in functions: 
+Acceptable built-in functions:
 
 (atom x)
 (null x)
@@ -19,9 +19,9 @@ Acceptable built-in functions:
 - (cadr ...)
 (cdr x)
 - (cdaar ...)
-(cons x y) 
+(cons x y)
 (if x y z)
-(cond ... ) 
+(cond ...)
 (let ((x y) (u v)) z)
 (let* ((x y) (u v)) z)
 (defun ...)
@@ -29,7 +29,7 @@ Acceptable built-in functions:
 (list x1 x2 ...)
 (print ...)
 (sort L fun) % this is useful for the last problem
-(copy-list L) % useful in conjunction with sort 
+(copy-list L) % useful in conjunction with sort
 - http://clhs.lisp.se/Body/f_cp_lis.htm#copy-list
 - (sort (copy-list L) sort-predicate)
 
@@ -50,29 +50,47 @@ Acceptable built-in functions:
 
 ;;; QUESTION 1
 
+; Solution tests y against each element of x until a match
+; or the end of x is found. It uses 3 base cases for first element of x with
+; recursion on the remaining elements: (1) a fail case when x is nil and thus
+; can't contain y, (2) a success case when the x element matches y, and (3)
+; a fail case when x contains no more elements after not matching y.
+
 (defun xmember (X Y)
-	"
-	Returns T if argument Y is a member of the argument list X and NIL 
-	otherwise. Also tests for lists being members of lists. Both the list X and
-	the argument Y may be NIL or lists containing NIL.
+  "Returns t if argument Y is a member of the argument list X and nil otherwise."
 
-	Solution essentially tests y against each element of x until a match
-	or the end of x is found. It uses 3 base cases for first element of x with 
-	recursion on the remaining elements: (1) a fail case when x is nil and thus
-	can't contain y, (2) a success case when the x element matches y, and (3) 
-	a fail case when x contains no more elements after not matching y.
-	"
+  (cond
+    ;; base case: list is empty (fail)
+    ((null X) nil)
 
-	(cond
-		;; base cases
-		((eq X NIL) NIL); list is empty (fail)
-		((equal (car X) Y) T); list contains Y (success) 
-		((eq (cdr X) NIL) NIL); end of list (fail)
+    ;; base case: list contains Y (success)
+    ((equal (car X) Y) t)
 
-		;; recursion to iterate over remaining elements of list
-		(T (xmember (cdr X) Y))
-	)
-)
+    ;; base case: end of list (fail)
+    ((null (cdr X)) nil)
 
-;; QUESTION 2
+    ;; recursion to iterate over remaining elements of list
+    (t (xmember (cdr X) Y))))
 
+;;; QUESTION 2
+
+(defun flatten (x)
+  "Returns list of only the atoms appearing in list x and its contained nested sublists in order of appearance."
+
+  ;; invoke accumulating parameters
+  (collect-atoms x nil))
+
+(defun collect-atoms (x y)
+  "Searches list x for atoms and captures them in list y"
+
+  (cond
+    ((null x) y) ; all atoms found
+    ((atom (car x) ; atom found
+      (collect-atoms
+        (cdr x) ; iterate through remaining items
+        (append y (list (car x)))))) ; capture found atom for return list
+    (t ; list found
+      (collect-atoms
+        (cdr x) ; iterate through remaining items
+        (append y ; capture atoms contained in found list for return list
+          (collect-atoms (car x) nil))))))
