@@ -51,7 +51,16 @@
     (equal (flatten '(a (b c) (d ((e)) f))) '(a b c d e f))
     (equal (flatten '(a (b c) (((d)) e))) '(a b c d e))))
 
+(deftest test-mix ()
+  (check
+    (equal (mix '(d e f) '(a b c)) '(a d b e c f))
+    (equal (mix '(a) '(1 2 3)) '(1 a 2 3))
+    (equal (mix '(d e f g h) '((a) (b c))) '((a) d (b c) e f g h))
+    (equal (mix nil '(1 2 3)) '(1 2 3))
+    (equal (mix '(nil) '(1 2 3)) '(1 nil 2 3))))
+
 (defun test-asn1 ()
   (combine-results
     (test-xmember)
-    (test-flatten)))
+    (test-flatten)
+    (test-mix)))

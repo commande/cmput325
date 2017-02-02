@@ -48,7 +48,7 @@ Acceptable built-in functions:
 
 |#
 
-;;; QUESTION 1
+;;; Question 1
 
 ; Solution tests y against each element of x until a match
 ; or the end of x is found. It uses 3 base cases for first element of x with
@@ -72,28 +72,27 @@ Acceptable built-in functions:
     ;; recursion to iterate over remaining elements of list
     (t (xmember (cdr X) Y))))
 
-;;; QUESTION 2
+;;; Question 2
 
 (defun flatten (x)
   "Returns list of only the atoms appearing in list x and its contained nested sublists in order of appearance."
 
-  (collect-atoms x nil))
+  (collect-atoms x nil)) ; invoke accumulating parameters technique
 
 (defun collect-atoms (x y)
   "Searches list x and sublists in x for atoms and captures them in list y"
 
+  (if (null x) y ; end of list, return found atoms
+    (collect-atoms ; else
+      (cdr x) ; iterate over list
+      (if (atom (car x)) ; element is atom?
+        (append y (list (car x))) ; if so, add it to the return list
+        (append y (collect-atoms (car x) nil)))))) ; if not, search it for atoms
+
+;;; Question 3
+
+(defun mix (L2 L1)
   (cond
-    ;; List to search is empty
-    ((null x) y)
-
-    ;; First list element is an atom
-    ((atom (car x)
-      (collect-atoms
-        (cdr x) ; search remainder of list
-        (append y (list (car x)))))) ; capture found atom for return list
-
-    ;; First list element is not an atom
-    (t
-      (collect-atoms
-        (cdr x) ; search remainder of list
-        (append y (collect-atoms (car x) nil)))))) ; capture atoms contained in found list for return list
+    ((null L2) L1)
+    ((null L1) L2)
+    (t (append (list (car L1)) (list (car L2)) (mix (cdr L2) (cdr L1))))))
