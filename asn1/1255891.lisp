@@ -137,8 +137,9 @@ Acceptable built-in functions:
 ;;; ----------
 ;;; Question 4
 
-; Try every second element and then what remains. Actually dont...
-; accumulating params...
+; Solution iterates two elements at a time through the input list using an
+; accumulating paramters helper function to capture and return the alternating
+; elements.
 
 (defun split (L)
   (split-into L '(nil nil)))
@@ -151,8 +152,51 @@ Acceptable built-in functions:
     (null L) R ; input list is empty
 
     ;; Recursion
-    (split-into ; expects L and R
+    (split-into
       (cddr L) ; discard the first two elements of L
       (list ; but first capture them into R[0] and R[1] respectively
         (append (car R) (pluck L)) ; add L[0] to R[0]
         (append (cadr R) (pluck (cdr L))))))) ; add L[1] to R[1]
+
+
+;;; ----------
+;;; Question 5
+
+; 5.1: No, not when L1 is shorter than L2
+
+; 5.2: Yes, because (car (split L)) is the [even-indexed elements of L]
+; 	and (cadr (split L)) is the [odd-indexed elements of L].
+;		Therefore, (mix (cadr (split L)) (car (split L))) is essentially
+;		(mix [odd-indexed elements of L] [even-indexed elements of L])
+;		and mix by its definition will return the first even-indexed element (L[0])
+;		followed by the first even-indexed element (L[1]) until both lists are
+;		exhausted. In other words, that mix call returns (L[0] L[1] ... L[n-1] L[n])
+;		where n is the number of elements in L.
+
+;;; ----------
+;;; Question 6
+
+; http://www.geeksforgeeks.org/dynamic-programming-subset-sum-problem/
+
+; isSubsetSum(set, n, sum) = isSubsetSum(set, n-1, sum) ||
+;                            isSubsetSum(set, n-1, sum - set[n-1])
+; Base Cases:
+; isSubsetSum(set, n, sum) = false, if sum > 0 and n == 0
+; isSubsetSum(set, n, sum) = true, if sum == 0
+
+(defun is-subset-sum (S L)
+  "TODO: DOCUMENTATION"
+
+  (cond
+    ;; Base Cases
+    ((and (> S 0) (null L)) nil) ; false, if sum > 0 and n == 0
+    ((= S 0) T) ; true, if sum == 0
+
+    (t
+      (or
+        (is-subset-sum
+          S
+          (cdr L))
+        (is-subset-sum
+          (- S (cadr L))
+          (cdr L))))))
