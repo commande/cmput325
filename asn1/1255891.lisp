@@ -191,6 +191,7 @@ Acceptable built-in functions:
     ;; Base Cases
     ((and (> S 0) (null L)) nil) ; false, if sum > 0 and n == 0
     ((= S 0) T) ; true, if sum == 0
+    ((> (car L) S) (is-subset-sum S (cdr L))) ; number too big
 
     (t
       (or
