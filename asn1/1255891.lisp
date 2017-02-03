@@ -198,5 +198,5 @@ Acceptable built-in functions:
           S
           (cdr L))
         (is-subset-sum
-          (- S (cadr L))
+          (- S (car L))
           (cdr L))))))
