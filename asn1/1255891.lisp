@@ -48,6 +48,7 @@ Acceptable built-in functions:
 
 |#
 
+;;; ----------
 ;;; Question 1
 
 ; Solution tests y against each element of x until a match
@@ -69,7 +70,7 @@ Acceptable built-in functions:
     (t
       (xmember (cdr X) Y)))) ; test remaining elements for match
 
-
+;;; ----------
 ;;; Question 2
 
 ; Solution uses a helper function following accumulating parameters technique
@@ -98,7 +99,7 @@ Acceptable built-in functions:
         (append y (pluck x)) ; if it is, add it to the return list
         (append y (collect-atoms (car x) nil)))))) ; if it's not, search within it for atoms
 
-
+;;; ----------
 ;;; Question 3
 
 ; Solution uses recursion with 2 base cases, one for either input list being
@@ -126,6 +127,8 @@ Acceptable built-in functions:
   (if (null L) nil ; ensures nil input returns 'nil not '(nil)
     (list (car L)))) ; first element of L as a list
 
+
+;;; ----------
 ;;; Question 4
 
 ; Try every second element and then what remains. Actually dont...
@@ -137,14 +140,13 @@ Acceptable built-in functions:
 (defun split-into (L R)
   "Appends elements of list L alternatingly to the two sublists in list R"
 
-  (cond
+  (if
     ;; Base Cases
-    ((null L) R) ; input list is empty
+    (null L) R ; input list is empty
 
     ;; Recursion
-    (t
-      (split-into
-        (cddr L) ; new L
-        (list ; new R
-          (append (car R) (pluck L)) ; R[0].append(L[0])
-          (append (cadr R) (pluck (cdr L)))))))) ; R[1].append(L[1])
+    (split-into ; expects L and R
+      (cddr L) ; discard the first two elements of L
+      (list ; but first capture them into R[0] and R[1] respectively
+        (append (car R) (pluck L)) ; add L[0] to R[0]
+        (append (cadr R) (pluck (cdr L))))))) ; add L[1] to R[1]
