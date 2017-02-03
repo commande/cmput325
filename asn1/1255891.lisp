@@ -75,15 +75,17 @@ Acceptable built-in functions:
 
 ; Solution uses a helper function following accumulating parameters technique
 ; to "gather" atoms in a return list. The helper uses recursion to not only
-; search the input list for atoms by
-; iterating over each element, but also search within list elements encountered
-; for atoms inside them.
+; search the input list for atoms by iterating over each element, but also
+; search within list elements encountered for atoms inside them.
+
+; A second helper function is defined to help construct return list.
 
 (defun flatten (x)
   "Returns list of only the atoms appearing in list x and its contained nested sublists in order of appearance."
 
   ;; Use accumulating parameters helper
   (collect-atoms x nil))
+
 
 (defun collect-atoms (x y)
   "Searches list x and sublists in x for atoms and captures them in list y"
@@ -98,6 +100,15 @@ Acceptable built-in functions:
       (if (atom (car x)) ; but first check if this element is an atom
         (append y (pluck x)) ; if it is, add it to the return list
         (append y (collect-atoms (car x) nil)))))) ; if it's not, search within it for atoms
+
+
+(defun pluck (L)
+  "Returns first element of list L as a one-element list or nil if L is empty"
+
+  (if (null L) nil ; ensures nil input returns 'nil not '(nil)
+    (list (car L)))) ; first element of L as a list
+
+
 
 ;;; ----------
 ;;; Question 3
@@ -121,11 +132,6 @@ Acceptable built-in functions:
         (pluck L2) ; 1st element of L2,
         (mix (cdr L2) (cdr L1)))))) ; remaining elements of both
 
-(defun pluck (L)
-  "Returns first element of list L as a one-element list or nil if L is empty"
-
-  (if (null L) nil ; ensures nil input returns 'nil not '(nil)
-    (list (car L)))) ; first element of L as a list
 
 
 ;;; ----------
@@ -141,7 +147,7 @@ Acceptable built-in functions:
   "Appends elements of list L alternatingly to the two sublists in list R"
 
   (if
-    ;; Base Cases
+    ;; Base Case
     (null L) R ; input list is empty
 
     ;; Recursion
