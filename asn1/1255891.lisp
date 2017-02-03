@@ -60,39 +60,83 @@ Acceptable built-in functions:
   "Returns t if argument Y is a member of the argument list X and nil otherwise."
 
   (cond
-    ;; base case: list is empty (fail)
-    ((null X) nil)
+    ;; Base Cases
+    ((null X) nil) ; list is empty (fail)
+    ((equal (car X) Y) t) ; list contains Y (success)
+    ((null (cdr X)) nil) ; end of list (fail)
 
-    ;; base case: list contains Y (success)
-    ((equal (car X) Y) t)
+    ;; Recursion
+    (t
+      (xmember (cdr X) Y)))) ; test remaining elements for match
 
-    ;; base case: end of list (fail)
-    ((null (cdr X)) nil)
-
-    ;; recursion to iterate over remaining elements of list
-    (t (xmember (cdr X) Y))))
 
 ;;; Question 2
+
+; Solution uses a helper function following accumulating parameters technique
+; to "gather" atoms in a return list. The helper uses recursion to not only
+; search the input list for atoms by
+; iterating over each element, but also search within list elements encountered
+; for atoms inside them.
 
 (defun flatten (x)
   "Returns list of only the atoms appearing in list x and its contained nested sublists in order of appearance."
 
-  (collect-atoms x nil)) ; invoke accumulating parameters technique
+  ;; Use accumulating parameters helper
+  (collect-atoms x nil))
 
 (defun collect-atoms (x y)
   "Searches list x and sublists in x for atoms and captures them in list y"
 
-  (if (null x) y ; end of list, return found atoms
-    (collect-atoms ; else
-      (cdr x) ; iterate over list
-      (if (atom (car x)) ; element is atom?
-        (append y (list (car x))) ; if so, add it to the return list
-        (append y (collect-atoms (car x) nil)))))) ; if not, search it for atoms
+  (if
+    ;; Base Case
+    (null x) y ; end of list, return found atoms
+
+    ;; Recursion
+    (collect-atoms
+      (cdr x) ; iterate over remaining elements in list
+      (if (atom (car x)) ; but first check if this element is an atom
+        (append y (list (car x))) ; if it is, add it to the return list
+        (append y (collect-atoms (car x) nil)))))) ; if it's not, search within it for atoms
+
 
 ;;; Question 3
 
+; Solution uses recursion with 2 base cases, one for either input list being
+; empty. It takes the first element of each list, joins them, and continues
+; doing so with what remains in both lists.
+
 (defun mix (L2 L1)
+  "Mixes the elements of L1 and L2 into a single list, by choosing elements from L1 and L2 alternatingly."
+
   (cond
-    ((null L2) L1)
-    ((null L1) L2)
-    (t (append (list (car L1)) (list (car L2)) (mix (cdr L2) (cdr L1))))))
+    ;; Base Cases
+    ((null L2) L1) ; Nothing left in L2, return what's left in L1
+    ((null L1) L2) ; Nothing left in L1, return what's left in L2
+
+    ;; Recursion
+    (t
+      (append ; Join the following in order:(li
+        (list (car L1)) ; 1st element of L1,
+        (list (car L2)) ; 1st element of L2,
+        (mix (cdr L2) (cdr L1)))))) ; remaining elements of both
+
+
+
+;;; Question 4
+
+; Try every second element and then what remains. Actually dont...
+; accumulating params...
+
+(defun split (L)
+  (split-into L (nil nil)))
+
+(defun split-into (L R)
+  "R is a list containing two sublists"
+
+  (cond
+    ;; Base Cases
+    ((null L) R)
+
+    ;; Recursion
+    (t ()
+      (split-into L R))))
