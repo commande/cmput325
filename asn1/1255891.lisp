@@ -200,3 +200,6 @@ Acceptable built-in functions:
         (is-subset-sum
           (- S (car L))
           (cdr L))))))
+
+(defun subsetsum (S L)
+  (is-subset-sum S (sort L #'>)))
