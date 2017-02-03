@@ -3,50 +3,7 @@
 
 ;;;; Brett Commandeur
 ;;;; 1255891
-;;;; CMPUt 325 Wi17 - NON-PROCEDURAL PROG LANGUAGES Combined LAB LEC Wi17
-
-#|--- TODO: Remove this comment
-
-Acceptable built-in functions:
-
-(atom x)
-(null x)
-(eq x y)
-(equal x y)
-(numberp x)
-(append x y)
-(car x)
-- (cadr ...)
-(cdr x)
-- (cdaar ...)
-(cons x y)
-(if x y z)
-(cond ...)
-(let ((x y) (u v)) z)
-(let* ((x y) (u v)) z)
-(defun ...)
-(quote x) and its short form 'x
-(list x1 x2 ...)
-(print ...)
-(sort L fun) % this is useful for the last problem
-(copy-list L) % useful in conjunction with sort
-- http://clhs.lisp.se/Body/f_cp_lis.htm#copy-list
-- (sort (copy-list L) sort-predicate)
-
-(+ x y)
-(- x y)
-(* x y)
-(/ x y)
-(< x y)
-(> x y)
-(= x y)
-(<= x y)
-(>= x y)
-(and x y)
-(or x y)
-(not x)
-
-|#
+;;;; CMPUT 325 Wi17 LEC B1 - NON-PROCEDURAL PROG LANGUAGES Combined LAB LEC Wi17
 
 ;;; ----------
 ;;; Question 1
@@ -176,16 +133,23 @@ Acceptable built-in functions:
 ;;; ----------
 ;;; Question 6
 
+; Solution incomplete: attempted to work from the following reference:
 ; http://www.geeksforgeeks.org/dynamic-programming-subset-sum-problem/
 
+; Particularly:
 ; isSubsetSum(set, n, sum) = isSubsetSum(set, n-1, sum) ||
 ;                            isSubsetSum(set, n-1, sum - set[n-1])
 ; Base Cases:
 ; isSubsetSum(set, n, sum) = false, if sum > 0 and n == 0
 ; isSubsetSum(set, n, sum) = true, if sum == 0
 
+(defun subsetsum (S L)
+  "Incomplete: only returns true is L contains a subset summating to S"
+
+  (is-subset-sum S (sort L #'>)))
+
 (defun is-subset-sum (S L)
-  "TODO: DOCUMENTATION"
+  "Returns true is L contains a subset summating to S"
 
   (cond
     ;; Base Cases
@@ -193,7 +157,8 @@ Acceptable built-in functions:
     ((= S 0) T) ; true, if sum == 0
     ((> (car L) S) (is-subset-sum S (cdr L))) ; number too big
 
-    (t
+    (t  ; isSubsetSum(set, n, sum) = isSubsetSum(set, n-1, sum) ||
+        ;                            isSubsetSum(set, n-1, sum - set[n-1])
       (or
         (is-subset-sum
           S
@@ -201,6 +166,3 @@ Acceptable built-in functions:
         (is-subset-sum
           (- S (car L))
           (cdr L))))))
-
-(defun subsetsum (S L)
-  (is-subset-sum S (sort L #'>)))
