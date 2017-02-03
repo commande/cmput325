@@ -59,8 +59,15 @@
     (equal (mix nil '(1 2 3)) '(1 2 3))
     (equal (mix '(nil) '(1 2 3)) '(1 nil 2 3))))
 
+(deftest test-split ()
+  (check
+    (equal (split '(1 2 3 4 5 6)) '((1 3 5) (2 4 6)))
+    (equal (split '((a) (b c) (d e f) g h)) '(((a) (d e f) h) ((b c) g)))
+    (equal (split '()) '(nil nil))))
+
 (defun test-asn1 ()
   (combine-results
     (test-xmember)
     (test-flatten)
-    (test-mix)))
+    (test-mix)
+    (test-split)))

@@ -95,7 +95,7 @@ Acceptable built-in functions:
     (collect-atoms
       (cdr x) ; iterate over remaining elements in list
       (if (atom (car x)) ; but first check if this element is an atom
-        (append y (list (car x))) ; if it is, add it to the return list
+        (append y (pluck x)) ; if it is, add it to the return list
         (append y (collect-atoms (car x) nil)))))) ; if it's not, search within it for atoms
 
 
@@ -116,11 +116,15 @@ Acceptable built-in functions:
     ;; Recursion
     (t
       (append ; Join the following in order:(li
-        (list (car L1)) ; 1st element of L1,
-        (list (car L2)) ; 1st element of L2,
+        (pluck L1) ; 1st element of L1,
+        (pluck L2) ; 1st element of L2,
         (mix (cdr L2) (cdr L1)))))) ; remaining elements of both
 
+(defun pluck (L)
+  "Returns first element of list L as a one-element list or nil if L is empty"
 
+  (if (null L) nil ; ensures nil input returns 'nil not '(nil)
+    (list (car L)))) ; first element of L as a list
 
 ;;; Question 4
 
@@ -128,15 +132,19 @@ Acceptable built-in functions:
 ; accumulating params...
 
 (defun split (L)
-  (split-into L (nil nil)))
+  (split-into L '(nil nil)))
 
 (defun split-into (L R)
-  "R is a list containing two sublists"
+  "Appends elements of list L alternatingly to the two sublists in list R"
 
   (cond
     ;; Base Cases
-    ((null L) R)
+    ((null L) R) ; input list is empty
 
     ;; Recursion
-    (t ()
-      (split-into L R))))
+    (t
+      (split-into
+        (cddr L) ; new L
+        (list ; new R
+          (append (car R) (pluck L)) ; R[0].append(L[0])
+          (append (cadr R) (pluck (cdr L)))))))) ; R[1].append(L[1])
