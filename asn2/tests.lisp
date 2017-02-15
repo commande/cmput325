@@ -31,43 +31,16 @@
   (format t "~:[FAIL~;pass~] ... ~a: ~a~%" result *test-name* form)
   result)
 
-
 ;;; Tests
-
-(deftest test-xmember ()
+(deftest test-primitives ()
   (check
-    (eq (xmember '(1) '1) T)
-    (eq (xmember '((1) 2 3) '1) NIL)
-    (eq (xmember '((1) 2 3) '(1)) T)
-    (eq (xmember nil nil) NIL)
-    (eq (xmember '(nil) nil) T)
-    (eq (xmember '((nil)) nil) NIL)
-    (eq (xmember '(1 2 3 (nil)) '(nil)) T)
-    (eq (xmember '(nil) '(nil)) NIL)))
+    ;; First
+    (equal (fl-interp '(first (1 2 3)) nil) '1)
+    ;; Rest
+    (equal (fl-interp '(rest (1 2 (3))) nil) '(2 (3)))
+    ;; First and Rest
+    (equal (fl-interp '(first (rest (1 (2 3)))) nil) '(2 3))))
 
-(deftest test-flatten ()
-  (check
-    (equal (flatten '(((((a))((((((b)))))))))) '(a b))
-    (equal (flatten '(a (b c) (d ((e)) f))) '(a b c d e f))
-    (equal (flatten '(a (b c) (((d)) e))) '(a b c d e))))
-
-(deftest test-mix ()
-  (check
-    (equal (mix '(d e f) '(a b c)) '(a d b e c f))
-    (equal (mix '(a) '(1 2 3)) '(1 a 2 3))
-    (equal (mix '(d e f g h) '((a) (b c))) '((a) d (b c) e f g h))
-    (equal (mix nil '(1 2 3)) '(1 2 3))
-    (equal (mix '(nil) '(1 2 3)) '(1 nil 2 3))))
-
-(deftest test-split ()
-  (check
-    (equal (split '(1 2 3 4 5 6)) '((1 3 5) (2 4 6)))
-    (equal (split '((a) (b c) (d e f) g h)) '(((a) (d e f) h) ((b c) g)))
-    (equal (split '()) '(nil nil))))
-
-(defun test-asn1 ()
+(defun test-asn2 ()
   (combine-results
-    (test-xmember)
-    (test-flatten)
-    (test-mix)
-    (test-split)))
+    (test-primitives)))

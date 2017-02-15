@@ -3,21 +3,23 @@
 
 ;;;; Brett Commandeur
 ;;;; 1255891
-;;;; CMPUT 325 Wi17 LEC B1 - NON-PROCEDURAL PROG LANGUAGES Combined LAB LEC Wi17
+;;;; CMPUT 325 Wi17 LEC B1 - NON-PROCEDURAL prog LANGUAGES Combined LAB LEC Wi17
 
-(defun fl-interp (Expr Prog)
-  (if ((atom Expr) Expr) ; this includes the case where expr is nil
-    (let ( (func (car Expr))  (args (cdr Expr)))
+(defun fl-interp (expr prog)
+  (if (atom expr) expr ; this includes the case where expr is nil
+    (let ((func (car expr)) (args (cdr expr)))
       (cond
-        ;;; Built in Functions
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;;; Primitive Functions ;;;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-        ;; First
-        ((eq func 'first
-          (car (fl-interp (car args) Prog))))
+        ;;; First
+        ((eq func 'first) (car (fl-interp (car args) prog)))
+        ((eq func 'rest) (cdr (fl-interp (car args) prog)))
 
         ;; CASE: f is a user-defined function --> evaluate the arguments and
           ;; apply f to the evaluated arguments (applicative order reduction)
 
 
         ;; f is undefined --> E is returned as if it is quoted in lisp
-        (t (E))))))
+        (t expr)))))
