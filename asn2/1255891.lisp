@@ -8,11 +8,11 @@
 (defun fl-interp (expr prog)
   (let*
     (
-      (func (car expr))
-      (args (cdr expr))
-      (e1 (car args))
-      (e2 (cadr args))
-      (e3 (caddr args)))
+      (func (car expr))   ; possible function name
+      (args (cdr expr))   ; " function arguments
+      (e1 (car args))     ; " first arg (for primitives)
+      (e2 (cadr args))    ; " second "
+      (e3 (caddr args)))  ; " third "
 
     (if
       ;; Atoms and Nil
@@ -20,6 +20,10 @@
 
         ;; Functions
         (cond
+
+          ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+          ;;; Primitive Functions ;;;
+          ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
           ;; One Argument Primitives
           (
@@ -37,77 +41,41 @@
 
           ;; Two Argument Primitives
           (
-            (xmember func '(cons eq equal + - * > < = and or))
+            (xmember func '(cons eq equal + - * > < = and or)) ; function names
             (let ; evaluate the arguments
               (
                 (ev-e1 (fl-interp e1 prog))
                 (ev-e2 (fl-interp e2 prog)))
               (cond                                     ; expected functions:
-                ((eq func 'null) (null ev-e1))          ; (null x)
-                ((eq func 'atom) (atom ev-e1))          ; (atom x)
-                ((eq func 'isnumber) (numberp ev-e1))   ; (isnumber x)
-                ((eq func 'not) (not ev-e1))            ; (not x)
-                ((eq func 'first) (car ev-e1))          ; (first x)
-                ((eq func 'rest) (cdr ev-e1))))))       ; (rest x)
+                ((eq func 'cons) (cons ev-e1 ev-e2))    ; (cons x y)
+                ((eq func 'eq) (eq ev-e1 ev-e2))        ; (eq x y)
+                ((eq func 'equal) (equal ev-e1 ev-e2))  ; (equal x y)
+                ((eq func '+) (+ ev-e1 ev-e2))          ; (+ x y)
+                ((eq func '*) (* ev-e1 ev-e2))          ; (- x y)
+                ((eq func '>) (> ev-e1 ev-e2))          ; (> x y)
+                ((eq func '<) (< ev-e1 ev-e2))          ; (< x y)
+                ((eq func '=) (= ev-e1 ev-e2))          ; (= x y)
+                ((eq func 'and) (and ev-e1 ev-e2))      ; (and x y)
+                ((eq func 'or) (or ev-e1 ev-e2)))))    ; (or x y)
 
+          ;; Three Argument Primitives
+          (
+            (eq func 'if)
+              (if (fl-interp e1 prog)
+                (fl-interp e2 prog)
+                (fl-interp e3 prog)))
 
-      ;;; (cons x y)
-      (
-        (eq func 'cons)
-        (cons (fl-interp e1 prog)))
+          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+          ;;; User Defined Funcitons ;;;
+          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-      ;;; (eq x y)
-      (
-        (eq func 'eq)
-        (eq (fl-interp e1 prog) (fl-interp e2 prog)))
+          ;; evaluate the arguments
+          ;; apply f to the evaluated arguments (applicative order reduction)
 
-      ;;; (equal x y)
-      (
-        (eq func 'equal)
-        (equal (fl-interp e1 prog) (fl-interp e2 prog)))
+          ;; context: single list with (n . v) pairs for locality of access
 
-      ;;; (+ x y)
-      (
-        (eq func '+)
-        (+ (fl-interp e1 prog) (fl-interp e2 prog)))
-
-      ;;; (- x y)
-      (
-        (eq func 'equal)
-        (equal (fl-interp e1 prog) (fl-interp e2 prog)))
-
-      ;;; (* x y)
-
-      ;;; (> x y)
-
-      ;;; (< x y)
-
-      ;;; (= x y)
-
-      ;;; (and x y)
-
-      ;;; (or x y)
-
-      ;;; (if x y z)
-      (
-        (eq func 'if)
-        (if (fl-interp (car args) prog)
-          (fl-interp (cadr args) prog)
-          (fl-interp (caddr args) prog))
-
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        ;;; User Defined Funcitons ;;;
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-        ;; evaluate the arguments
-        ;; apply f to the evaluated arguments (applicative order reduction)
-
-        ;; context: single list with (n . v) pairs for locality of access
-
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        ;;; Undefined Funcitons ;;;
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        (t expr)))))
+          ;; Undefined Functions
+          (t expr)))))
 
 (defun xmember (X Y)
   "Returns t if argument Y is a member of the argument list X and nil otherwise."
