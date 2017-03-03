@@ -28,8 +28,8 @@
         ;; One Argument Primitives
         (
           (xmember func '(null atom isnumber not first rest)) ; function names
-          (let ; evaluate the argument
-            (
+          (let
+            ( ; evaluate the argument
               (ev-e1 (fl-interp e1 prog)))
             (cond                                   ; expected functions:
               ((eq func 'null) (null ev-e1))          ; (null x)
@@ -75,40 +75,39 @@
 
         (t
           (let
-            ;; Retrieve function and expected argument count
-            (argc (user-defined func prog))
+            ( ; Retrieve function and expected argument count
+              (argc (user-defined func prog)))
 
             ;; Function undefined (as per [expected-args])
             (if (null argc) expr ; return expression as is
 
               ;;; TODO: implement ;;;
-              nil
 
               ;; for each argument
               ;; -> 1. evaluate the argument
               ;; -> 2. replace instances of variable in expr
               ;; when no more arguments, simply interpret the expr
 
-              ;; (replace (fl-interp arg) var def-body nil)
+              ;; (swap (fl-interp arg) var def-body nil)
 
 
               )))))))
 
-(defun replace (ev-arg var body new-body)
+(defun swap (ev-arg var body new-body)
   "Replaces each instance of variable [var] with evaluated arg [ev-arg] in FL definition body [body] to return as [new-body]"
 
   (if (null body) new-body ; body is empty, done
     (let
-      (sym (car body)) ; treat first element as generic symbol
-      (if (atom sym)
+      ( ; treat first element as generic symbol
+        (sym (car body)))
 
+      (if (atom sym)
         ;; Symbol is an atom, eligible for replacement
         (if (equal sym var)
-          (replace ev-arg var (cdr body) (cons new-body ev-arg)) ; match found, append replaced symbol
-          (replace ev-arg var (cdr body) (cons new-body sym))) ; no match, append symbol
-
+          (swap ev-arg var (cdr body) (append new-body (list ev-arg))) ; match found, append replaced symbol
+          (swap ev-arg var (cdr body) (append new-body (list sym)))) ; no match, append symbol
         ;; Symbol is a list, search and replace within
-        (replace ev-arg var (cdr body) (cons new-body (replace ev-arg var sym nil)))))))
+        (swap ev-arg var (cdr body) (append new-body (list (swap ev-arg var sym nil))))))))
 
 (defun xmember (X Y)
   "Returns t if X is a member of the list Y and nil otherwise."

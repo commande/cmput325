@@ -92,8 +92,8 @@
     (equal (user-defined 'divide '((divide x y = (div x y 0)) (div x y z = (if (> (* y z) x) (- z 1) (div x y (+ z 1)))))) '2)
     (equal (user-defined 'div '((divide x y = (div x y 0)) (div x y z = (if (> (* y z) x) (- z 1) (div x y (+ z 1)))))) '3)
 
-    ;; [replace]
-    (equal (replace '3 'x '(if (> x y) x (if (< x y) y nil) nil) '(if (> 3 y) 3 (if (< 3 y) y nil))))))
+    ;; [swap]
+    (equal (swap '3 'x '(if (> x y) x (if (< x y) y nil)) nil) '(if (> 3 y) 3 (if (< 3 y) y nil)))))
 
 
     ; ;; Basic = 4 total
