@@ -93,8 +93,9 @@
     (equal (user-defined 'div '((divide x y = (div x y 0)) (div x y z = (if (> (* y z) x) (- z 1) (div x y (+ z 1)))))) '3)
 
     ;; [swap]
-    (equal (swap '3 'x '(if (> x y) x (if (< x y) y nil)) nil) '(if (> 3 y) 3 (if (< 3 y) y nil)))))
-
+    (equal (swap '3 'x '(if (> x y) x (if (< x y) y nil)) nil) '(if (> 3 y) 3 (if (< 3 y) y nil)))
+    (equal (swap '5 'y '(if (> x y) x (if (< x y) y nil)) nil) '(if (> x 5) x (if (< x 5) 5 nil)))
+    (equal (swap '5 'y '(if (> 3 y) 3 (if (< 3 y) y nil)) nil) '(if (> 3 5) 3 (if (< 3 5) 5 nil)))))
 
     ; ;; Basic = 4 total
     ; (equal (fl-interp '(greater 3 5) '((greater x y = (if (> x y) x (if (< x y) y nil))))) '5)

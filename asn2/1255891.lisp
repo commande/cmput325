@@ -76,10 +76,10 @@
         (t
           (let
             ( ; Retrieve function and expected argument count
-              (argc (user-defined func prog)))
+              (def-body (user-defined func prog)))
 
             ;; Function undefined (as per [expected-args])
-            (if (null argc) expr ; return expression as is
+            (if (null def-body) expr ; return expression as is
 
               ;;; TODO: implement ;;;
 
@@ -88,10 +88,21 @@
               ;; -> 2. replace instances of variable in expr
               ;; when no more arguments, simply interpret the expr
 
+              (fl-interp (swap-all func args def-body))
+
               ;; (swap (fl-interp arg) var def-body nil)
 
 
               )))))))
+
+(defun swap-all (args def-body)
+  "Replaces each variable instance with its evaluated argument and returns as [new-expr]"
+
+  (cond
+    ((null def-body) nil) ; body is empty, error
+    ((null args) new-expr) ; no more args, done
+    (t
+      (swap-all (cdr args) (swap (fl-interp car(args)) var def-body nil)))))
 
 (defun swap (ev-arg var body new-body)
   "Replaces each instance of variable [var] with evaluated arg [ev-arg] in FL definition body [body] to return as [new-body]"
@@ -119,13 +130,13 @@
     (t (xmember X (cdr Y))))) ; test remaining elements for match
 
 (defun user-defined (name prog)
-  "Returns number of expected args for function [name] if it is defined in prog and nil otherwise"
+  "Returns body for function [name] if it is defined in prog and nil otherwise"
 
   (cond
     ( ; prog is empty, fail
       (null prog) nil)
     ( ; first function name in prog matches, success
-      (equal (caar prog) name) (expected-args (car prog) nil))
+      (equal (caar prog) name) (car prog))
     ( ; end of list, fail
       (null (cdr prog)) nil)
     (t ; recursion
