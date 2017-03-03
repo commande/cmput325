@@ -34,15 +34,20 @@
 ;;; Tests
 (deftest test-primitives ()
   (check
-    ;; First
-    (equal (fl-interp '(first (1 2 3)) nil) '1)
-    ;; Rest
-    (equal (fl-interp '(rest (1 2 (3))) nil) '(2 (3)))
     ;; First and Rest
+    (equal (fl-interp '(first (1 2 3)) nil) '1)
+    (equal (fl-interp '(rest (p 1 2 (3))) nil) '(1 2 (3)))
+    (equal (fl-interp '(rest (1 2 (3))) nil) '(2 (3)))
     (equal (fl-interp '(first (rest (1 (2 3)))) nil) '(2 3))
     ;; If
-    (equal (fl-interp '(if (t) (if (t) t nil) nil) nil) 't)
-    (equal (fl-interp '(if (nil) nil (if (nil) nil t)) nil) 't)))
+    (equal (fl-interp '(if (> 1 0) (+ 1 2) (+ 2 3)) nil) '3)
+    (equal (fl-interp '(if (> 1 0) (if (eq 1 2) 3 4) 5)  nil) '4)
+    ;; Others
+    (equal (fl-interp '(eq (< 3 4) (eq (+ 3 4) (- 2 3))) nil) 'nil)
+    (equal (fl-interp '(cons (first (1 2 3))  (cons a nil)) nil) '(1 a))
+    (equal (fl-interp '(and (or T  nil) (> 3 4)) nil) 'nil)
+    (equal (fl-interp '(eq (1 2 3) (1 2 3)) nil) 'nil)
+    (equal (fl-interp '(equal (1 2 3) (1 2 3)) nil) 't)))
 
 (defun test-asn2 ()
   (combine-results
