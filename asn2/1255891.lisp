@@ -75,11 +75,11 @@
 
         (t
           (let
-            ( ; Retrieve function and expected argument count
-              (def-body (user-defined func prog)))
+            ( ; Retrieve function definition
+              (def (user-defined func prog)))
 
-            ;; Function undefined (as per [expected-args])
-            (if (null def-body) expr ; return expression as is
+            ;; Function undefined (as per [get-body])
+            (if (null def) expr ; return expression as is
 
               ;;; TODO: implement ;;;
 
@@ -88,21 +88,16 @@
               ;; -> 2. replace instances of variable in expr
               ;; when no more arguments, simply interpret the expr
 
-              (fl-interp (swap-all func args def-body))
+              (fl-interp (swap-all args (get-vars cdr def) (get-body def) prog) prog))))))))
 
-              ;; (swap (fl-interp arg) var def-body nil)
-
-
-              )))))))
-
-(defun swap-all (args def-body)
-  "Replaces each variable instance with its evaluated argument and returns as [new-expr]"
+(defun swap-all (args vars body prog)
+  "Replaces each variable instance in body with its respective evaluated arg"
 
   (cond
-    ((null def-body) nil) ; body is empty, error
-    ((null args) new-expr) ; no more args, done
+    ((null body) nil) ; body is empty, error
+    ((null args) body) ; no more args, done
     (t
-      (swap-all (cdr args) (swap (fl-interp car(args)) var def-body nil)))))
+      (swap-all (cdr args) (cdr vars) (swap (fl-interp (car args) prog) (car vars) body nil) prog))))
 
 (defun swap (ev-arg var body new-body)
   "Replaces each instance of variable [var] with evaluated arg [ev-arg] in FL definition body [body] to return as [new-body]"
@@ -142,17 +137,20 @@
     (t ; recursion
       (user-defined name (cdr prog))))) ; test remaining definitions for match
 
-(defun expected-args (def ret)
-  "Accumulates number of expected args in ret for function definition [def] in prog and nil if unable to find"
+(defun get-vars (paramlist ret)
+  "Returns accumulated variable names of function definition parameter list [paramlist] as ret or nil if unable to find"
 
   (cond
-    ( ; def is empty, fail
-      (null def) nil)
+    ( ; varlist is empty, fail
+      (null paramlist) nil)
     ( ; end of param list found (as marked by =), return count
-      (equal (car def) '=) ret)
+      (equal (car paramlist) '=) ret)
     ( ; end of list, fail
-      (null (cdr def)) nil)
+      (null (cdr paramlist)) nil)
     (t ; recursion
-      (if (null ret)
-        (expected-args (cdr def) 0) ; skip first element (function name)
-        (expected-args (cdr def) (+ ret 1)))))) ; count each following element
+      (get-vars (cdr paramlist) (append ret (list (car paramlist)))))))
+
+      ;
+      ; (if (null ret)
+      ;   (get-vars (cdr def) (append)) ; skip first element (function name)
+      ;   (get-vars (cdr def) (+ ret 1)))))) ; count each following element)
