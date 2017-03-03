@@ -39,7 +39,10 @@
     ;; Rest
     (equal (fl-interp '(rest (1 2 (3))) nil) '(2 (3)))
     ;; First and Rest
-    (equal (fl-interp '(first (rest (1 (2 3)))) nil) '(2 3))))
+    (equal (fl-interp '(first (rest (1 (2 3)))) nil) '(2 3))
+    ;; If
+    (equal (fl-interp '(if (t) (if (t) t nil) nil) nil) 't)
+    (equal (fl-interp '(if (nil) nil (if (nil) nil t)) nil) 't)))
 
 (defun test-asn2 ()
   (combine-results
