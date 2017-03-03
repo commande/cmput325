@@ -88,23 +88,23 @@
     (equal (swap '5 'y '(if (> 3 y) 3 (if (< 3 y) y nil)) nil) '(if (> 3 5) 3 (if (< 3 5) 5 nil)))
 
     ;; [swap-all]
-    (equal (swap-all '(3 5) '(x y) '(if (> x y) x (if (< x y) y nil)) '((greater x y = (if (> x y) x (if (< x y) y nil))))) '(if (> 3 5) 3 (if (< 3 5) 5 nil)))))
+    (equal (swap-all '(3 5) '(x y) '(if (> x y) x (if (< x y) y nil)) '((greater x y = (if (> x y) x (if (< x y) y nil))))) '(if (> 3 5) 3 (if (< 3 5) 5 nil)))
 
-    ; ;; Basic = 4 total
-    ; (equal (fl-interp '(greater 3 5) '((greater x y = (if (> x y) x (if (< x y) y nil))))) '5)
-    ; (equal (fl-interp '(square 4) '((square x = (* x x))))) ; > '16
-    ; (equal (fl-interp '(simpleinterest 4 2 5) '((simpleinterest x y z = (* x (* y z))))) '40)
-    ; (equal (fl-interp '(xor t nil) '((xor x y = (if (equal x y) nil t)))) 't)
-    ;
-    ; ;; More complex = 6 total
-    ; (equal (fl-interp '(last (s u p)) '((last x = (if (null (rest x)) (first x) (last (rest x)))))) 'p)
-    ; (equal (fl-interp '(push (1 2 3) 4) '((push x y = (if (null x) (cons y nil) (cons (first x) (push (rest x) y)))))) '(1 2 3 4))
-    ; (equal (fl-interp '(pop (1 2 3)) '((pop x = (if (atom (rest (rest x))) (cons (first x) nil) (cons (first x)(pop (rest x))))))) '(1 2))
-    ; (equal (fl-interp '(power 4 2) '((power x y = (if (= y 1) x (power (* x x) (- y 1)))))) '16)
-    ; (equal (fl-interp '(factorial 4) '((factorial x = (if (= x 1) 1 (* x (factorial (- x 1))))))) '24)
-    ; (equal (fl-interp '(divide 24 4) '((divide x y = (div x y 0)) (div x y z = (if (> (* y z) x) (- z 1) (div x y (+ z 1)))))))) '6)
+    ;; Basic = 4 total
+    (equal (fl-interp '(greater 3 5) '((greater x y = (if (> x y) x (if (< x y) y nil))))) '5)
+    (equal (fl-interp '(square 4) '((square x = (* x x)))) '16)
+    (equal (fl-interp '(simpleinterest 4 2 5) '((simpleinterest x y z = (* x (* y z))))) '40)
+    (equal (fl-interp '(xor t nil) '((xor x y = (if (equal x y) nil t)))) 't)
+
+    ;; More complex = 6 total
+    (equal (fl-interp '(last (s u p)) '((last x = (if (null (rest x)) (first x) (last (rest x)))))) 'p)
+    (equal (fl-interp '(push (1 2 3) 4) '((push x y = (if (null x) (cons y nil) (cons (first x) (push (rest x) y)))))) '(1 2 3 4))
+    (equal (fl-interp '(pop (1 2 3)) '((pop x = (if (atom (rest (rest x))) (cons (first x) nil) (cons (first x)(pop (rest x))))))) '(1 2))
+    (equal (fl-interp '(power 4 2) '((power x y = (if (= y 1) x (power (* x x) (- y 1)))))) '16)
+    (equal (fl-interp '(factorial 4) '((factorial x = (if (= x 1) 1 (* x (factorial (- x 1))))))) '24)
+    (equal (fl-interp '(divide 24 4) '((divide x y = (div x y 0)) (div x y z = (if (> (* y z) x) (- z 1) (div x y (+ z 1)))))) '6)))
 
 (defun test-asn2 ()
   (combine-results
-    ; (test-primitives)
+    (test-primitives)
     (test-user-defined)))
