@@ -78,11 +78,23 @@
 
 (deftest test-user-defined ()
   (check
-    ;; Helpers
+    ;;; Helpers
+    ;; [user-defined]
     (equal (user-defined 'greater '((greater x y = (if (> x y) x (if (< x y) y nil))))) '2)
     (equal (user-defined 'square '((square x = (* x x)))) '1)
     (equal (user-defined 'simpleinterest '((simpleinterest x y z = (* x (* y z))))) '3)
-    (equal (user-defined 'xor '((xor x y = (if (equal x y) nil t)))) '2)))
+    (equal (user-defined 'xor '((xor x y = (if (equal x y) nil t)))) '2)
+    (equal (user-defined 'last '((last x = (if (null (rest x)) (first x) (last (rest x)))))) '1)
+    (equal (user-defined 'push '((push x y = (if (null x) (cons y nil) (cons (first x) (push (rest x) y)))))) '2)
+    (equal (user-defined 'pop '((pop x = (if (atom (rest (rest x))) (cons (first x) nil) (cons (first x)(pop (rest x))))))) '1)
+    (equal (user-defined 'power '((power x y = (if (= y 1) x (power (* x x) (- y 1)))))) '2)
+    (equal (user-defined 'factorial '((factorial x = (if (= x 1) 1 (* x (factorial (- x 1))))))) '1)
+    (equal (user-defined 'divide '((divide x y = (div x y 0)) (div x y z = (if (> (* y z) x) (- z 1) (div x y (+ z 1)))))) '2)
+    (equal (user-defined 'div '((divide x y = (div x y 0)) (div x y z = (if (> (* y z) x) (- z 1) (div x y (+ z 1)))))) '3)
+
+    ;; [replace]
+    (equal (replace '3 'x '(if (> x y) x (if (< x y) y nil) nil) '(if (> 3 y) 3 (if (< 3 y) y nil))))))
+
 
     ; ;; Basic = 4 total
     ; (equal (fl-interp '(greater 3 5) '((greater x y = (if (> x y) x (if (< x y) y nil))))) '5)

@@ -68,17 +68,47 @@
             (fl-interp e3 prog)))
 
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        ;;; User Defined Funcitons ;;;
+        ;;; User Defined Functions ;;;
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         ;; evaluate the arguments
         ;; apply f to the evaluated arguments (applicative order reduction)
 
-        (
-          (user-defined func prog)
-          (let )
+        (t
+          (let
+            ;; Retrieve function and expected argument count
+            (argc (user-defined func prog))
 
-        ;; Undefined Functions
-        (t expr)))))
+            ;; Function undefined (as per [expected-args])
+            (if (null argc) expr ; return expression as is
+
+              ;;; TODO: implement ;;;
+              nil
+
+              ;; for each argument
+              ;; -> 1. evaluate the argument
+              ;; -> 2. replace instances of variable in expr
+              ;; when no more arguments, simply interpret the expr
+
+              ;; (replace (fl-interp arg) var def-body nil)
+
+
+              )))))))
+
+(defun replace (ev-arg var body new-body)
+  "Replaces each instance of variable [var] with evaluated arg [ev-arg] in FL definition body [body] to return as [new-body]"
+
+  (if (null body) new-body ; body is empty, done
+    (let
+      (sym (car body)) ; treat first element as generic symbol
+      (if (atom sym)
+
+        ;; Symbol is an atom, eligible for replacement
+        (if (equal sym var)
+          (replace ev-arg var (cdr body) (cons new-body ev-arg)) ; match found, append replaced symbol
+          (replace ev-arg var (cdr body) (cons new-body sym))) ; no match, append symbol
+
+        ;; Symbol is a list, search and replace within
+        (replace ev-arg var (cdr body) (cons new-body (replace ev-arg var sym nil)))))))
 
 (defun xmember (X Y)
   "Returns t if X is a member of the list Y and nil otherwise."
@@ -96,7 +126,7 @@
     ( ; prog is empty, fail
       (null prog) nil)
     ( ; first function name in prog matches, success
-      (equal (caar prog) name) (expected-args (caar prog) nil))
+      (equal (caar prog) name) (expected-args (car prog) nil))
     ( ; end of list, fail
       (null (cdr prog)) nil)
     (t ; recursion
@@ -107,7 +137,7 @@
 
   (cond
     ( ; def is empty, fail
-      (def) nil)
+      (null def) nil)
     ( ; end of param list found (as marked by =), return count
       (equal (car def) '=) ret)
     ( ; end of list, fail
