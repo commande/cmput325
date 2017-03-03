@@ -10,7 +10,7 @@
   (if
     (atom expr) expr ; simply return immediately
 
-    ;; Functions
+    ;; Interpret Functions
     (let*
       (
         (func (car expr))   ; function name
@@ -70,20 +70,49 @@
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         ;;; User Defined Funcitons ;;;
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
         ;; evaluate the arguments
         ;; apply f to the evaluated arguments (applicative order reduction)
 
-        ;; context: single list with (n . v) pairs for locality of access
+        (
+          (user-defined func prog)
+          (let )
 
         ;; Undefined Functions
         (t expr)))))
 
 (defun xmember (X Y)
-  "Returns t if argument X is a member of the argument list Y and nil otherwise."
+  "Returns t if X is a member of the list Y and nil otherwise."
 
   (cond
     ((null Y) nil) ; list is empty (fail)
-    ((equal (car Y) X) t) ; list contains Y (success)
+    ((equal (car Y) X) (expected-args)) ; list contains Y (success)
     ((null (cdr Y)) nil) ; end of list (fail)
     (t (xmember X (cdr Y))))) ; test remaining elements for match
+
+(defun user-defined (name prog)
+  "Returns number of expected args for function [name] if it is defined in prog and nil otherwise"
+
+  (cond
+    ( ; prog is empty, fail
+      (null prog) nil)
+    ( ; first function name in prog matches, success
+      (equal (caar prog) name) (expected-args (caar prog) nil))
+    ( ; end of list, fail
+      (null (cdr prog)) nil)
+    (t ; recursion
+      (user-defined name (cdr prog))))) ; test remaining definitions for match
+
+(defun expected-args (def ret)
+  "Accumulates number of expected args in ret for function definition [def] in prog and nil if unable to find"
+
+  (cond
+    ( ; def is empty, fail
+      (def) nil)
+    ( ; end of param list found (as marked by =), return count
+      (equal (car def) '=) ret)
+    ( ; end of list, fail
+      (null (cdr def)) nil)
+    (t ; recursion
+      (if (null ret)
+        (expected-args (cdr def) 0) ; skip first element (function name)
+        (expected-args (cdr def) (+ ret 1)))))) ; count each following element
