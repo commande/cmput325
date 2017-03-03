@@ -60,10 +60,10 @@
 
         ;; Three Argument Primitives
         (
-          (eq func 'if
-            (if (fl-interp e1 prog)
-              (fl-interp e2 prog)
-              (fl-interp e3 prog))))
+          (eq func 'if)
+          (if (fl-interp e1 prog)
+            (fl-interp e2 prog)
+            (fl-interp e3 prog)))
 
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         ;;; User Defined Funcitons ;;;

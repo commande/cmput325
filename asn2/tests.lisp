@@ -45,7 +45,7 @@
     ;; Others
     (equal (fl-interp '(eq (< 3 4) (eq (+ 3 4) (- 2 3))) nil) 'nil)
     (equal (fl-interp '(cons (first (1 2 3))  (cons a nil)) nil) '(1 a))
-    (equal (fl-interp '(and (or T  nil) (> 3 4)) nil) 'nil)
+    (equal (fl-interp '(and (or t nil) (> 3 4)) nil) 'nil)
     (equal (fl-interp '(eq (1 2 3) (1 2 3)) nil) 'nil)
     (equal (fl-interp '(equal (1 2 3) (1 2 3)) nil) 't)))
 
