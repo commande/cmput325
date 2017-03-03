@@ -27,7 +27,7 @@
 
         ;; One Argument Primitives
         (
-          (xmember func '(null atom not first rest)) ; function names
+          (xmember func '(null atom isnumber not first rest)) ; function names
           (let ; evaluate the argument
             (
               (ev-e1 (fl-interp e1 prog)))
